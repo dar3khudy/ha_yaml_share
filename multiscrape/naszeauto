@@ -1,0 +1,20 @@
+multiscrape:
+  - name: naszeauto
+    resource: https://naszeauto.gov.pl/
+    scan_interval: 43200   # częstotliwość aktualizacji co 12 godzin (86400 = raz na dobę, 21600 - co 6h itd.)
+    headers:
+      User-Agent: Mozilla/5.0
+
+    sensor:
+      - unique_id: naszeauto_nr_wniosku
+        name: naszeauto_nr_wniosku
+        select: 'div.uncode_text_column.text-lead b:last-of-type'
+        value_template: >
+          {{ value | regex_replace('[^A-Z0-9/]', '') }}
+        attributes:
+          - name: aktualizacja
+            select: 'div.uncode_text_column.text-lead strong:first-of-type'
+            value_template: "{{ value | trim }}"
+          - name: dzien_rozpatrywanego_wniosku
+            select: 'div.uncode_text_column.text-lead b:first-of-type'
+            value_template: "{{ value | trim }}"
